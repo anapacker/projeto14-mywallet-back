@@ -10,38 +10,35 @@ const app = express()
 
 //Configs
 app.use(express.json())
-app.use(cors)
+app.use(cors())
 dotenv.config()
 
 // Conexão DB
 const mongoClient = new MongoClient(process.env.DATABASE_URL)
+let db
 
-try {
-    mongoClient.connect()
-    console.log("mongoDB conectado!")
-} catch (err) {
-    console.log(err.message)
-}
-
-const db = mongoClient.db
+mongoClient.connect()
+    .then(() => db = mongoClient.db("mywallet"))
+    .catch((err) => console.log(err.message));
 
 //Schemas
 const userSchema = Joi.object({
     email: Joi.string().email().required(),
-    senha: Joi.string().required()
+    password: Joi.string().required()
 
 })
 app.post("/sign-in", async (req, res) => {
     const { email, password } = req.body
-
+    console.log(req.body);
     const validationSignin = userSchema.validate(req.body, { abortEarly: false })
     if (validationSignin.error) {
-        const errors = validation.error.datils.map((detail) => detail.message)
+        const errors = validationSignin.error.details.map((detail) => detail.message)
         return res.status(422).send(errors)
     }
-
+    console.log("terminou a validção");
     try {
         const user = await db.collection("users").findOne({ email })
+        console.log(user);
         if (!user) return res.status(404).send("E-mail não encontrado")
         if (!bcrypt.compareSync(password, user.password)) return res.sendStatus(401)
 
@@ -49,7 +46,7 @@ app.post("/sign-in", async (req, res) => {
         const token = uuid()
 
         await db.collection("session").insertOne({ userId: user._id, token })
-        res.sendStatus(token)
+        res.send(token)
     } catch (err) {
         return res.status(500).send(err.message)
     }
