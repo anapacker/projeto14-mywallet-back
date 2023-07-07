@@ -1,6 +1,6 @@
 import { signupSchema } from "../schemas/signupSchema.js"
 
-export function signupSchemaValidation() {
+export function signupSchemaValidation(req, res, next) {
     const validationSignup = signupSchema.validate(req.body, { abortEarly: false })
     if (validationSignup.error) {
         const errors = validationSignup.error.details.map((detail) => detail.message)
