@@ -6,7 +6,7 @@ export async function signin(req, res) {
     const { email, password } = req.body
     try {
         const user = await db.collection("users").findOne({ email })
-        if (!user) return res.status(404).send("E-mail não encontrado")
+        if (!user) return res.status(404).send("Você não tem cadastro.")
         if (!bcrypt.compareSync(password, user.password)) return res.sendStatus(401)
 
 
@@ -54,3 +54,4 @@ export async function signup(req, res) {
 
 
 }
+
