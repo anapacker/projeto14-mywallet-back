@@ -21,15 +21,9 @@ export async function signin(req, res) {
 }
 
 export async function getSignin(req, res) {
-    const { Authorization } = req.headers
-    const token = Authorization?.replace('Bearer ', '')
+    const { userId } = res.locals.session
 
-    if (!token) return res.sendStatus(401)
-
-    const session = await db.collection("session").findOne({ token })
-    if (!session) return res.sendStatus(401)
-
-    const user = await db.collection("users").findOne({ _id: session.userId })
+    const user = await db.collection("users").findOne({ _id: userId })
     if (user) {
         delete user.password
         res.send(user)
