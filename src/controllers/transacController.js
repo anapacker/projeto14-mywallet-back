@@ -27,10 +27,21 @@ export async function getTransac(req, res) {
 
     try {
         const transacs = await db.collection("transacoes").find({ userId }).sort({ _id: - 1 }).toArray()
+        let total = 0
+        for (let i = 0; i < transacs.length; i++) {
+            const valor = transacs[i].valor
+            total = total + valor
+        }
+        const objResponse = {
+            total,
+            transacs
+        }
 
-        res.send(transacs)
+        console.log(objResponse);
+        res.send(objResponse)
+
+
     } catch (err) {
         res.status(500).send(err.message)
     }
 }
-

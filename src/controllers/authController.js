@@ -49,3 +49,15 @@ export async function signup(req, res) {
 
 }
 
+export async function logout(req, res) {
+    const { authorization } = req.headers
+    const token = authorization?.replace('Bearer ', '')
+
+    try {
+        await db.collection("session").deleteOne({ token })
+        res.senStatus(204)
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+
+}

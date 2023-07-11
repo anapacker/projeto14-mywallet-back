@@ -5,7 +5,7 @@ import { validateAuth } from "../middlewars/validateAuth.js";
 
 const transacRouter = Router()
 transacRouter.post("/nova-transacao/:tipo", transacSchemaValidationMiddleware, validateAuth, postTransac)
-transacRouter.get("/nova-transacao/:tipo", validateAuth, getTransac)
+transacRouter.get("/transacoes", validateAuth, getTransac)
 
 
 export default transacRouter
